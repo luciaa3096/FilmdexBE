@@ -24,8 +24,4 @@ public class MovieController {
         return movie != null ? ResponseEntity.ok(movie) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public Movie create(@RequestBody Movie movie) {
-        return movieService.saveMovie(movie);
-    }
 }
