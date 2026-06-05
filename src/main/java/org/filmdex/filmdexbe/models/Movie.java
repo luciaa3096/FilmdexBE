@@ -1,5 +1,6 @@
 package org.filmdex.filmdexbe.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty; // <-- Nueva importación de Jackson
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -14,9 +15,11 @@ public class Movie {
 
     @Column(nullable = false)
     private String title;
+
     private Integer year;
 
     @Column(columnDefinition = "TEXT")
+    @JsonProperty("overview")
     private String synopsis;
 
     @ManyToOne
@@ -33,4 +36,16 @@ public class Movie {
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    // pasar año de TMDB de string a int
+    @JsonProperty("release_date")
+    public void setYearFromReleaseDate(String releaseDate) {
+        if (releaseDate != null && releaseDate.length() >= 4) {
+            try {
+                this.year = Integer.parseInt(releaseDate.substring(0, 4));
+            } catch (NumberFormatException e) {
+                this.year = null;
+            }
+        }
+    }
 }
