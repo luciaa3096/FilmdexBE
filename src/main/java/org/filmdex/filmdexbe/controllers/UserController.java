@@ -1,12 +1,15 @@
 package org.filmdex.filmdexbe.controllers;
 
 import org.filmdex.filmdexbe.models.User;
+import org.filmdex.filmdexbe.models.Movie; // <-- Nueva importación de Movie
 import org.filmdex.filmdexbe.services.UserService;
+import org.filmdex.filmdexbe.services.MovieService; // <-- Nueva importación de MovieService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Objects; // <-- Para filtrar posibles películas nulas
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,6 +18,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MovieService movieService; // <-- Inyectamos el servicio de películas para consultar TMDB
 
     @GetMapping
     public List<User> getAll() {
@@ -38,10 +43,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    // Obtener los IDs de las películas vistas de un usuario
+    // Obtener los detalles completos de las películas vistas de un usuario
     @GetMapping("/{userId}/watched")
-    public ResponseEntity<List<Long>> getWatchedMovies(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getWatchedMovies(userId));
+    public ResponseEntity<List<Movie>> getWatchedMovies(@PathVariable Long userId) {
+        List<Long> movieIds = userService.getWatchedMovies(userId);
+
+        // Mapeamos cada ID consultando a TMDB a través de MovieService
+        List<Movie> movies = movieIds.stream()
+                .map(id -> movieService.getMovieById(id))
+                .filter(Objects::nonNull) // Descartamos si alguna película falla o no existe en TMDB
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(movies);
     }
 
     // Añadir película a vistas
@@ -58,10 +71,18 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // Obtener los IDs de las películas favoritas de un usuario
+    // Obtener los detalles completos de las películas favoritas de un usuario
     @GetMapping("/{userId}/favourites")
-    public ResponseEntity<List<Long>> getFavouriteMovies(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getFavouriteMovies(userId));
+    public ResponseEntity<List<Movie>> getFavouriteMovies(@PathVariable Long userId) {
+        List<Long> movieIds = userService.getFavouriteMovies(userId);
+
+        // Mapeamos cada ID consultando a TMDB a través de MovieService
+        List<Movie> movies = movieIds.stream()
+                .map(id -> movieService.getMovieById(id))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(movies);
     }
 
     // Añadir película a favoritos
