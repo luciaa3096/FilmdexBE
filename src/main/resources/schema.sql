@@ -82,3 +82,51 @@ CREATE TABLE user_favourite_movies (
                                        PRIMARY KEY (user_id, movie_id),
                                        CONSTRAINT fk_favourite_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- =======================================================
+-- INSERT DE DATOS DE PRUEBA (SEMILLA) CON IDS REALES DE TMDB
+-- =======================================================
+
+-- 1. PERSONAS (Directores y Actores)
+INSERT INTO persons (id, name) VALUES (1, 'Christopher Nolan');
+INSERT INTO persons (id, name) VALUES (2, 'Leonardo DiCaprio');
+INSERT INTO persons (id, name) VALUES (3, 'Cillian Murphy');
+INSERT INTO persons (id, name) VALUES (4, 'Christian Bale');
+INSERT INTO persons (id, name) VALUES (5, 'Quentin Tarantino');
+INSERT INTO persons (id, name) VALUES (6, 'Scarlett Johansson');
+INSERT INTO persons (id, name) VALUES (7, 'Denis Villeneuve');
+
+-- 2. PELÍCULAS CON SUS IDS REALES DE TMDB
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (27205, 'Origen / Inception', 2010, 'Un ladrón que roba secretos corporativos a través del uso de la tecnología de compartir sueños es reclutado para implantar una idea en la mente de un CEO.', 1);
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (157336, 'Interstellar', 2014, 'Un grupo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por asegurar la supervivencia de la humanidad.', 1);
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (872585, 'Oppenheimer', 2023, 'La historia del científico estadounidense J. Robert Oppenheimer y su papel en el desarrollo de la bomba atómica.', 1);
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (680, 'Pulp Fiction', 1994, 'Las vidas de dos asesinos a sueldo de la mafia, un boxeador, un gánster y su esposa, y un par de bandidos de cafetería se entrelazan en cuatro historias de violencia y redención.', 5);
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (155, 'El caballero oscuro / The Dark Knight', 2008, 'Cuando el Joker desata el caos sobre la gente de Gotham, Batman debe aceptar uno de los mayores desafíos psicológicos y físicos de su capacidad para luchar contra la injusticia.', 1);
+INSERT INTO movies (id, title, year, synopsis, director_id) VALUES (693134, 'Dune: Parte dos', 2024, 'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.', 7);
+
+-- 3. REPARTO (MOVIE_CAST)
+INSERT INTO movie_cast (movie_id, person_id) VALUES (27205, 2);
+INSERT INTO movie_cast (movie_id, person_id) VALUES (27205, 3);
+INSERT INTO movie_cast (movie_id, person_id) VALUES (872585, 3);
+INSERT INTO movie_cast (movie_id, person_id) VALUES (155, 4);
+
+-- 4. USUARIOS
+INSERT INTO users (id, name, username, password) VALUES (1, 'Andrés', 'andres', '123');
+INSERT INTO users (id, name, username, password) VALUES (2, 'Usuario123', 'usuario123', '123');
+INSERT INTO users (id, name, username, password) VALUES (3, 'Usuario321', 'usuario321', '123');
+
+-- 5. RESEÑAS (REVIEWS) - Nota: "comment" va entre comillas dobles al ser palabra reservada en Oracle
+INSERT INTO reviews (id, user_id, movie_id, rating, "comment") VALUES (1, 2, 27205, 9, 'Excelente película con una trama sorprendente, Nolan en su máxima expresión.');
+INSERT INTO reviews (id, user_id, movie_id, rating, "comment") VALUES (2, 3, 157336, 10, 'La actuación del protagonista fue magistral y la banda sonora de Hans Zimmer es de otro planeta.');
+INSERT INTO reviews (id, user_id, movie_id, rating, "comment") VALUES (3, 1, 155, 10, 'La mejor película de superhéroes de todos los tiempos. Heath Ledger increíble.');
+
+-- 6. PELÍCULAS VISTAS (USER_WATCHED_MOVIES)
+INSERT INTO user_watched_movies (user_id, movie_id) VALUES (1, 27205);
+INSERT INTO user_watched_movies (user_id, movie_id) VALUES (1, 872585);
+INSERT INTO user_watched_movies (user_id, movie_id) VALUES (1, 155);
+
+-- 7. PELÍCULAS FAVORITAS (USER_FAVOURITE_MOVIES)
+INSERT INTO user_favourite_movies (user_id, movie_id) VALUES (1, 27205);
+INSERT INTO user_favourite_movies (user_id, movie_id) VALUES (1, 155);
+
+COMMIT;
