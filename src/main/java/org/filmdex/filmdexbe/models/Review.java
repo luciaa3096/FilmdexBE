@@ -24,6 +24,7 @@ public class Review {
     @Column(nullable = false)
     private Integer rating;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "\"comment\"")
     private String comment;
 }

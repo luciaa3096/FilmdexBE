@@ -19,7 +19,7 @@ public class Movie {
 
     private Integer year;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     @JsonProperty("overview")
     private String synopsis;
 
