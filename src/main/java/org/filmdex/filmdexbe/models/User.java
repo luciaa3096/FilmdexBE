@@ -1,10 +1,12 @@
 package org.filmdex.filmdexbe.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.util.List;
 
 @Entity
 @Table(name = "users") // 'user' suele ser una palabra reservada en SQL, es mejor usar 'users'
+@Data
 public class User {
 
     @Id
@@ -19,6 +21,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("user")
     private List<Review> review;
 
     @ElementCollection

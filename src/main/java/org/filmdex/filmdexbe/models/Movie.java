@@ -36,6 +36,7 @@ public class Movie {
     private List<Person> cast;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("movie")
     private List<Review> reviews;
 
     // pasar año de TMDB de string a int

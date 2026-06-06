@@ -15,10 +15,12 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("review")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("reviews")
     private Movie movie;
 
     @Column(nullable = false)
