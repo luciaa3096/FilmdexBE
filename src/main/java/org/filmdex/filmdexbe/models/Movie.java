@@ -23,6 +23,29 @@ public class Movie {
     @JsonProperty("overview")
     private String synopsis;
 
+    @JsonProperty("poster_path")
+    private String posterPath;
+
+    @JsonProperty("vote_average")
+    private Double voteAverage;
+
+    @JsonProperty("rating")
+    public Double getRating() {
+        if (reviews == null || reviews.isEmpty()) {
+            return 0.0;
+        }
+        double sum = 0;
+        int count = 0;
+        for (Review r : reviews) {
+            if (r.getRating() != null) {
+                sum += r.getRating();
+                count++;
+            }
+        }
+        if (count == 0) return 0.0;
+        return Math.round((sum / count) * 10.0) / 10.0;
+    }
+
     @ManyToOne
     @JoinColumn(name = "director_id")
     private Person director;
