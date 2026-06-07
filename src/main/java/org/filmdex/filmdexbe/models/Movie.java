@@ -1,13 +1,11 @@
 package org.filmdex.filmdexbe.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty; // <-- Nueva importación de Jackson
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
 import java.util.List;
 
 @Entity
 @Table(name = "movies")
-@Data
 public class Movie {
     @Id
     private Long id;
@@ -38,6 +36,31 @@ public class Movie {
     @JsonProperty("genre_ids")
     private List<Integer> genreIds;
 
+    @Transient
+    @JsonProperty("credits")
+    private CreditsDto credits;
+
+    @Transient
+    @JsonProperty("runtime")
+    private Integer runtime;
+
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private Person director;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_cast",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "person_id")
+    )
+    private List<Person> cast;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("movie")
+    private List<Review> reviews;
+
+    // Static DTOs
     public static class GenreDto {
         private Integer id;
         private String name;
@@ -45,6 +68,31 @@ public class Movie {
         public void setId(Integer id) { this.id = id; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
+    }
+
+    public static class CreditsDto {
+        @JsonProperty("cast")
+        private List<Person> castList;
+        @JsonProperty("crew")
+        private List<CrewMemberDto> crewList;
+        
+        public List<Person> getCastList() { return castList; }
+        public void setCastList(List<Person> castList) { this.castList = castList; }
+        public List<CrewMemberDto> getCrewList() { return crewList; }
+        public void setCrewList(List<CrewMemberDto> crewList) { this.crewList = crewList; }
+    }
+
+    public static class CrewMemberDto {
+        private Long id;
+        private String name;
+        private String job;
+        
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public String getJob() { return job; }
+        public void setJob(String job) { this.job = job; }
     }
 
     private static final java.util.Map<Integer, String> GENRE_MAP = java.util.Map.ofEntries(
@@ -101,23 +149,6 @@ public class Movie {
         return Math.round((sum / count) * 10.0) / 10.0;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "director_id")
-    private Person director;
-
-    @ManyToMany
-    @JoinTable(
-            name = "movie_cast",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-    private List<Person> cast;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("movie")
-    private List<Review> reviews;
-
-    // pasar año de TMDB de string a int
     @JsonProperty("release_date")
     public void setYearFromReleaseDate(String releaseDate) {
         if (releaseDate != null && releaseDate.length() >= 4) {
@@ -127,5 +158,144 @@ public class Movie {
                 this.year = null;
             }
         }
+    }
+
+    @JsonProperty("duration")
+    public String getDuration() {
+        if (runtime != null) {
+            return runtime + " min";
+        }
+        return null;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getSynopsis() {
+        return synopsis;
+    }
+
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public Double getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(Double voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public List<GenreDto> getGenresList() {
+        return genresList;
+    }
+
+    public void setGenresList(List<GenreDto> genresList) {
+        this.genresList = genresList;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    public void setGenreIds(List<Integer> genreIds) {
+        this.genreIds = genreIds;
+    }
+
+    public CreditsDto getCredits() {
+        return credits;
+    }
+
+    public void setCredits(CreditsDto credits) {
+        this.credits = credits;
+    }
+
+    public Integer getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(Integer runtime) {
+        this.runtime = runtime;
+    }
+
+    public Person getDirector() {
+        if (this.director != null) {
+            return this.director;
+        }
+        if (credits != null && credits.getCrewList() != null) {
+            for (CrewMemberDto crew : credits.getCrewList()) {
+                if ("Director".equalsIgnoreCase(crew.getJob())) {
+                    Person p = new Person();
+                    p.setId(crew.getId());
+                    p.setName(crew.getName());
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setDirector(Person director) {
+        this.director = director;
+    }
+
+    public List<Person> getCast() {
+        if (this.cast != null && !this.cast.isEmpty()) {
+            return this.cast;
+        }
+        if (credits != null && credits.getCastList() != null) {
+            return credits.getCastList().stream()
+                    .limit(6)
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return this.cast;
+    }
+
+    public void setCast(List<Person> cast) {
+        this.cast = cast;
+    }
+
+    @JsonProperty("castMembers")
+    public List<Person> getCastMembers() {
+        return getCast();
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

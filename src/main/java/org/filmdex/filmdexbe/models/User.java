@@ -1,12 +1,10 @@
 package org.filmdex.filmdexbe.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.util.List;
 
 @Entity
 @Table(name = "users") // 'user' suele ser una palabra reservada en SQL, es mejor usar 'users'
-@Data
 public class User {
 
     @Id
@@ -35,5 +33,60 @@ public class User {
     @Column(name = "movie_id")
     private List<Long> favourites;
 
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Review> getReview() {
+        return review;
+    }
+
+    public void setReview(List<Review> review) {
+        this.review = review;
+    }
+
+    public List<Long> getWatched() {
+        return watched;
+    }
+
+    public void setWatched(List<Long> watched) {
+        this.watched = watched;
+    }
+
+    public List<Long> getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(List<Long> favourites) {
+        this.favourites = favourites;
+    }
 }

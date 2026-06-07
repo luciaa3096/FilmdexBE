@@ -19,7 +19,20 @@ public class MovieService {
     }
 
     public List<Movie> getAllMovies() {
-        return movieRepository.getAllMovies();
+        List<Movie> movies = movieRepository.getAllMovies();
+        if (movies == null) {
+            return java.util.Collections.emptyList();
+        }
+        return movies.parallelStream()
+                .map(m -> {
+                    try {
+                        Movie detailed = movieRepository.getMovieById(m.getId());
+                        return detailed != null ? detailed : m;
+                    } catch (Exception e) {
+                        return m;
+                    }
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public Movie getMovieById(Long id) {
