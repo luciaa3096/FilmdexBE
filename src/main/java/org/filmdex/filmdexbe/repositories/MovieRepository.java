@@ -36,7 +36,7 @@ public class MovieRepository {
 
     public Movie getMovieById(Long id) {
         return restClient.get()
-                .uri("/movie/{id}?language=es-ES", id)
+                .uri("/movie/{id}?language=es-ES&append_to_response=credits", id)
                 .header("Authorization", "Bearer " + token) // <-- Usa el token configurado
                 .retrieve()
                 .body(Movie.class);
