@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Map;
+import static java.util.Map.entry;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "movies")
@@ -61,7 +64,6 @@ public class Movie {
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties("movie")
     private List<Review> reviews;
 
-    // Static DTOs
     public static class GenreDto {
         private Integer id;
         private String name;
@@ -96,26 +98,26 @@ public class Movie {
         public void setJob(String job) { this.job = job; }
     }
 
-    private static final java.util.Map<Integer, String> GENRE_MAP = java.util.Map.ofEntries(
-        java.util.Map.entry(28, "Acción"),
-        java.util.Map.entry(12, "Aventura"),
-        java.util.Map.entry(16, "Animación"),
-        java.util.Map.entry(35, "Comedia"),
-        java.util.Map.entry(80, "Crimen"),
-        java.util.Map.entry(99, "Documental"),
-        java.util.Map.entry(18, "Drama"),
-        java.util.Map.entry(10751, "Familia"),
-        java.util.Map.entry(14, "Fantasía"),
-        java.util.Map.entry(36, "Historia"),
-        java.util.Map.entry(27, "Terror"),
-        java.util.Map.entry(10402, "Música"),
-        java.util.Map.entry(9648, "Misterio"),
-        java.util.Map.entry(10749, "Romance"),
-        java.util.Map.entry(878, "Ciencia Ficción"),
-        java.util.Map.entry(10770, "Película de TV"),
-        java.util.Map.entry(53, "Suspense"),
-        java.util.Map.entry(10752, "Bélica"),
-        java.util.Map.entry(37, "Western")
+    private static final Map<Integer, String> GENRE_MAP = Map.ofEntries(
+        entry(28, "Acción"),
+        entry(12, "Aventura"),
+        entry(16, "Animación"),
+        entry(35, "Comedia"),
+        entry(80, "Crimen"),
+        entry(99, "Documental"),
+        entry(18, "Drama"),
+        entry(10751, "Familia"),
+        entry(14, "Fantasía"),
+        entry(36, "Historia"),
+        entry(27, "Terror"),
+        entry(10402, "Música"),
+        entry(9648, "Misterio"),
+        entry(10749, "Romance"),
+        entry(878, "Ciencia Ficción"),
+        entry(10770, "Película de TV"),
+        entry(53, "Suspense"),
+        entry(10752, "Bélica"),
+        entry(37, "Western")
     );
 
     @JsonProperty("genre")
@@ -123,12 +125,12 @@ public class Movie {
         if (genresList != null && !genresList.isEmpty()) {
             return genresList.stream()
                     .map(GenreDto::getName)
-                    .collect(java.util.stream.Collectors.joining(" / "));
+                    .collect(Collectors.joining(" / "));
         }
         if (genreIds != null && !genreIds.isEmpty()) {
             return genreIds.stream()
                     .map(id -> GENRE_MAP.getOrDefault(id, "Otros"))
-                    .collect(java.util.stream.Collectors.joining(" / "));
+                    .collect(Collectors.joining(" / "));
         }
         return null;
     }
@@ -169,7 +171,6 @@ public class Movie {
         return null;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -278,7 +279,7 @@ public class Movie {
         if (credits != null && credits.getCastList() != null) {
             return credits.getCastList().stream()
                     .limit(6)
-                    .collect(java.util.stream.Collectors.toList());
+                    .collect(Collectors.toList());
         }
         return this.cast;
     }

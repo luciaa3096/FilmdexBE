@@ -6,7 +6,9 @@ import org.filmdex.filmdexbe.repositories.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -21,7 +23,7 @@ public class MovieService {
     public List<Movie> getAllMovies() {
         List<Movie> movies = movieRepository.getAllMovies();
         if (movies == null) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
         return movies.parallelStream()
                 .map(m -> {
@@ -32,14 +34,14 @@ public class MovieService {
                         return m;
                     }
                 })
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public Movie getMovieById(Long id) {
         try {
             return movieRepository.getMovieById(id);
         } catch (Exception e) {
-            return null; // Si TMDB no encuentra el ID, devolvemos null
+            return null;
         }
     }
 

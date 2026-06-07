@@ -35,16 +35,6 @@ public class UserServiceTest {
         sampleUser.setPassword("123");
     }
 
-    @Test
-    void testCreateUser() {
-        when(userRepository.save(sampleUser)).thenReturn(sampleUser);
-
-        User result = userService.createUser(sampleUser);
-
-        assertNotNull(result);
-        assertEquals("andres", result.getUsername());
-        verify(userRepository, times(1)).save(sampleUser);
-    }
 
     @Test
     void testGetUserById_Found() {

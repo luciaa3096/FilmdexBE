@@ -13,10 +13,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
-
     public User getUserById(Long id) {
         return (User) userRepository.findById(id).orElse(null);
     }
@@ -48,32 +44,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Obtiene los IDs de las películas favoritas
     public List<Long> getFavouriteMovies(Long userId) {
         return userRepository.findFavouriteMoviesByUserId(userId);
     }
 
-    // Añade la película a favoritas
     public void addMovieToFavourites(Long userId, Long movieId) {
         userRepository.addMovieToFavourites(userId, movieId);
     }
 
-    // Elimina la película de favorita
     public void removeMovieFromFavourites(Long userId, Long movieId) {
         userRepository.removeMovieFromFavourites(userId, movieId);
     }
 
-    // Obtiene los IDs de las películas vistas
     public List<Long> getWatchedMovies(Long userId) {
         return userRepository.findWatchedMoviesByUserId(userId);
     }
 
-    // Añade la película a vistas
     public void addMovieToWatched(Long userId, Long movieId) {
         userRepository.addMovieToWatched(userId, movieId);
     }
 
-    // Elimina la película de vistas
     public void removeMovieFromWatched(Long userId, Long movieId) {
         userRepository.removeMovieFromWatched(userId, movieId);
     }

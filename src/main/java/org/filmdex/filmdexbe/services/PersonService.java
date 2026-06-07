@@ -35,10 +35,4 @@ public class PersonService {
         personRepository.deleteById(id);
     }
 
-
-    public List<Person> getAllDirectors() {
-        return personRepository.findAll().stream()
-                .filter(p -> p.getDirectedMovies() != null && !p.getDirectedMovies().isEmpty())
-                .toList();
-    }
 }

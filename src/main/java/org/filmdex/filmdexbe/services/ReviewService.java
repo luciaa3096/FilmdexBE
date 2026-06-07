@@ -27,18 +27,14 @@ public class ReviewService {
             Long movieId = review.getMovie().getId();
             if (!movieDbRepository.existsById(movieId)) {
                 try {
-                    // Consultar los datos de la película a TMDB
                     Movie tmdbMovie = movieRepository.getMovieById(movieId);
                     if (tmdbMovie != null) {
-                        // Limpiamos relaciones para evitar errores de cascada/FK con la tabla persons
                         tmdbMovie.setDirector(null);
                         tmdbMovie.setCast(null);
                         tmdbMovie.setReviews(null);
-                        // Persistimos en la BD local
                         movieDbRepository.save(tmdbMovie);
                     }
                 } catch (Exception e) {
-                    // Fallback: Si TMDB falla, creamos una entrada básica en la BD
                     Movie basicMovie = new Movie();
                     basicMovie.setId(movieId);
                     basicMovie.setTitle("Película " + movieId);

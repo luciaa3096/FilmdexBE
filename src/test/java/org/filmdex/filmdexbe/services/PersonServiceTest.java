@@ -34,14 +34,13 @@ public class PersonServiceTest {
         directorPerson = new Person();
         directorPerson.setId(1L);
         directorPerson.setName("Christopher Nolan");
-        // Le asignamos una película dirigida para simular que actúa como director
         Movie movie = new Movie();
         directorPerson.setDirectedMovies(List.of(movie));
 
         actorPerson = new Person();
         actorPerson.setId(2L);
         actorPerson.setName("Leonardo DiCaprio");
-        actorPerson.setDirectedMovies(new ArrayList<>()); // Lista vacía (no es director)
+        actorPerson.setDirectedMovies(new ArrayList<>());
     }
 
     @Test
@@ -67,7 +66,6 @@ public class PersonServiceTest {
 
     @Test
     void testDeletePerson_Success() {
-        // Tu código verifica primero si existe antes de borrar
         when(personRepository.existsById(1L)).thenReturn(true);
         doNothing().when(personRepository).deleteById(1L);
 
@@ -88,16 +86,5 @@ public class PersonServiceTest {
         verify(personRepository, never()).deleteById(anyLong());
     }
 
-    @Test
-    void testGetAllDirectors() {
-        // Simulamos que la base de datos tiene tanto un actor como un director
-        when(personRepository.findAll()).thenReturn(List.of(directorPerson, actorPerson));
 
-        List<Person> directors = personService.getAllDirectors();
-
-        // La lógica del stream en tu servicio debe filtrar solo al que tiene películas dirigidas
-        assertNotNull(directors);
-        assertEquals(1, directors.size());
-        assertEquals("Christopher Nolan", directors.get(0).getName());
-    }
 }

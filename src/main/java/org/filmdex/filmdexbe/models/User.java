@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "users") // 'user' suele ser una palabra reservada en SQL, es mejor usar 'users'
+@Table(name = "users")
 public class User {
 
     @Id

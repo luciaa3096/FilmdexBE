@@ -1,14 +1,14 @@
 package org.filmdex.filmdexbe.controllers;
 
 import org.filmdex.filmdexbe.models.User;
-import org.filmdex.filmdexbe.models.Movie; // <-- Nueva importación de Movie
+import org.filmdex.filmdexbe.models.Movie;
 import org.filmdex.filmdexbe.services.UserService;
-import org.filmdex.filmdexbe.services.MovieService; // <-- Nueva importación de MovieService
+import org.filmdex.filmdexbe.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Objects; // <-- Para filtrar posibles películas nulas
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -19,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private MovieService movieService; // <-- Inyectamos el servicio de películas para consultar TMDB
+    private MovieService movieService;
 
     @GetMapping
     public List<User> getAll() {
@@ -43,40 +43,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    // Obtener los detalles completos de las películas vistas de un usuario
     @GetMapping("/{userId}/watched")
     public ResponseEntity<List<Movie>> getWatchedMovies(@PathVariable Long userId) {
         List<Long> movieIds = userService.getWatchedMovies(userId);
 
-        // Mapeamos cada ID consultando a TMDB a través de MovieService
-        List<Movie> movies = movieIds.stream()
-                .map(id -> movieService.getMovieById(id))
-                .filter(Objects::nonNull) // Descartamos si alguna película falla o no existe en TMDB
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(movies);
-    }
-
-    // Añadir película a vistas
-    @PostMapping("/{userId}/watched/{movieId}")
-    public ResponseEntity<Void> markAsWatched(@PathVariable Long userId, @PathVariable Long movieId) {
-        userService.addMovieToWatched(userId, movieId);
-        return ResponseEntity.ok().build();
-    }
-
-    // Eliminar película de vistas
-    @DeleteMapping("/{userId}/watched/{movieId}")
-    public ResponseEntity<Void> removeFromWatched(@PathVariable Long userId, @PathVariable Long movieId) {
-        userService.removeMovieFromWatched(userId, movieId);
-        return ResponseEntity.ok().build();
-    }
-
-    // Obtener los detalles completos de las películas favoritas de un usuario
-    @GetMapping("/{userId}/favourites")
-    public ResponseEntity<List<Movie>> getFavouriteMovies(@PathVariable Long userId) {
-        List<Long> movieIds = userService.getFavouriteMovies(userId);
-
-        // Mapeamos cada ID consultando a TMDB a través de MovieService
         List<Movie> movies = movieIds.stream()
                 .map(id -> movieService.getMovieById(id))
                 .filter(Objects::nonNull)
@@ -85,14 +55,36 @@ public class UserController {
         return ResponseEntity.ok(movies);
     }
 
-    // Añadir película a favoritos
+    @PostMapping("/{userId}/watched/{movieId}")
+    public ResponseEntity<Void> markAsWatched(@PathVariable Long userId, @PathVariable Long movieId) {
+        userService.addMovieToWatched(userId, movieId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/watched/{movieId}")
+    public ResponseEntity<Void> removeFromWatched(@PathVariable Long userId, @PathVariable Long movieId) {
+        userService.removeMovieFromWatched(userId, movieId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{userId}/favourites")
+    public ResponseEntity<List<Movie>> getFavouriteMovies(@PathVariable Long userId) {
+        List<Long> movieIds = userService.getFavouriteMovies(userId);
+
+        List<Movie> movies = movieIds.stream()
+                .map(id -> movieService.getMovieById(id))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(movies);
+    }
+
     @PostMapping("/{userId}/favourites/{movieId}")
     public ResponseEntity<Void> addToFavourites(@PathVariable Long userId, @PathVariable Long movieId) {
         userService.addMovieToFavourites(userId, movieId);
         return ResponseEntity.ok().build();
     }
 
-    // Eliminar película de favoritos
     @DeleteMapping("/{userId}/favourites/{movieId}")
     public ResponseEntity<Void> removeFromFavourites(@PathVariable Long userId, @PathVariable Long movieId) {
         userService.removeMovieFromFavourites(userId, movieId);
