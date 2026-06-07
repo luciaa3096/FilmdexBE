@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO user_favourite_movies (user_id, movie_id) " +
-            "SELECT :userId, :movieId " +
+            "SELECT :userId, :movieId FROM DUAL " +
             "WHERE NOT EXISTS (SELECT 1 FROM user_favourite_movies WHERE user_id = :userId AND movie_id = :movieId)",
             nativeQuery = true)
     void addMovieToFavourites(@Param("userId") Long userId, @Param("movieId") Long movieId);
@@ -40,7 +40,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO user_watched_movies (user_id, movie_id) " +
-            "SELECT :userId, :movieId " +
+            "SELECT :userId, :movieId FROM DUAL " +
             "WHERE NOT EXISTS (SELECT 1 FROM user_watched_movies WHERE user_id = :userId AND movie_id = :movieId)",
             nativeQuery = true)
     void addMovieToWatched(@Param("userId") Long userId, @Param("movieId") Long movieId);

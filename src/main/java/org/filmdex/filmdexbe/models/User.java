@@ -20,17 +20,17 @@ public class User {
 
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties("user")
     private List<Review> review;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_watched_movies", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "movie_id")
     private List<Long> watched;
 
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_favourite_movies", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "movie_id")
     private List<Long> favourites;

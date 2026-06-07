@@ -20,14 +20,71 @@ public class Movie {
     private Integer year;
 
     @Lob
-    @JsonProperty("overview")
+    @JsonProperty("synopsis")
+    @com.fasterxml.jackson.annotation.JsonAlias("overview")
     private String synopsis;
 
-    @JsonProperty("poster_path")
+    @JsonProperty("posterPath")
+    @com.fasterxml.jackson.annotation.JsonAlias("poster_path")
     private String posterPath;
 
-    @JsonProperty("vote_average")
+    @JsonProperty("voteAverage")
+    @com.fasterxml.jackson.annotation.JsonAlias("vote_average")
     private Double voteAverage;
+
+    @Transient
+    @JsonProperty("genres")
+    private List<GenreDto> genresList;
+
+    @Transient
+    @JsonProperty("genre_ids")
+    private List<Integer> genreIds;
+
+    public static class GenreDto {
+        private Integer id;
+        private String name;
+        public Integer getId() { return id; }
+        public void setId(Integer id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+    }
+
+    private static final java.util.Map<Integer, String> GENRE_MAP = java.util.Map.ofEntries(
+        java.util.Map.entry(28, "Acción"),
+        java.util.Map.entry(12, "Aventura"),
+        java.util.Map.entry(16, "Animación"),
+        java.util.Map.entry(35, "Comedia"),
+        java.util.Map.entry(80, "Crimen"),
+        java.util.Map.entry(99, "Documental"),
+        java.util.Map.entry(18, "Drama"),
+        java.util.Map.entry(10751, "Familia"),
+        java.util.Map.entry(14, "Fantasía"),
+        java.util.Map.entry(36, "Historia"),
+        java.util.Map.entry(27, "Terror"),
+        java.util.Map.entry(10402, "Música"),
+        java.util.Map.entry(9648, "Misterio"),
+        java.util.Map.entry(10749, "Romance"),
+        java.util.Map.entry(878, "Ciencia Ficción"),
+        java.util.Map.entry(10770, "Película de TV"),
+        java.util.Map.entry(53, "Suspense"),
+        java.util.Map.entry(10752, "Bélica"),
+        java.util.Map.entry(37, "Western")
+    );
+
+    @JsonProperty("genre")
+    public String getGenre() {
+        if (genresList != null && !genresList.isEmpty()) {
+            return genresList.stream()
+                    .map(GenreDto::getName)
+                    .collect(java.util.stream.Collectors.joining(" / "));
+        }
+        if (genreIds != null && !genreIds.isEmpty()) {
+            return genreIds.stream()
+                    .map(id -> GENRE_MAP.getOrDefault(id, "Otros"))
+                    .collect(java.util.stream.Collectors.joining(" / "));
+        }
+        return null;
+    }
 
     @JsonProperty("rating")
     public Double getRating() {
@@ -58,7 +115,7 @@ public class Movie {
     )
     private List<Person> cast;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties("movie")
     private List<Review> reviews;
 
