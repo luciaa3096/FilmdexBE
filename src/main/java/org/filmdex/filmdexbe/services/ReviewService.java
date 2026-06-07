@@ -53,7 +53,7 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
-    public List<Review> getReviewsByMovieId(Long movieId) {
+    public List<Review> getReviewsByMovie(Long movieId) {
         return reviewRepository.findByMovieId(movieId);
     }
 }
