@@ -1,5 +1,6 @@
 package org.filmdex.filmdexbe.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.List;
@@ -17,15 +18,15 @@ public class Movie {
 
     @Lob
     @JsonProperty("synopsis")
-    @com.fasterxml.jackson.annotation.JsonAlias("overview")
+    @JsonAlias("overview")
     private String synopsis;
 
     @JsonProperty("posterPath")
-    @com.fasterxml.jackson.annotation.JsonAlias("poster_path")
+    @JsonAlias("poster_path")
     private String posterPath;
 
     @JsonProperty("voteAverage")
-    @com.fasterxml.jackson.annotation.JsonAlias("vote_average")
+    @JsonAlias("vote_average")
     private Double voteAverage;
 
     @Transient
