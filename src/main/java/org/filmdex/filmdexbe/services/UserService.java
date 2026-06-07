@@ -30,6 +30,21 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        if (user.getId() != null) {
+            User existingUser = userRepository.findById(user.getId()).orElse(null);
+            if (existingUser != null) {
+                if (user.getName() != null) {
+                    existingUser.setName(user.getName());
+                }
+                if (user.getUsername() != null) {
+                    existingUser.setUsername(user.getUsername());
+                }
+                if (user.getPassword() != null) {
+                    existingUser.setPassword(user.getPassword());
+                }
+                return userRepository.save(existingUser);
+            }
+        }
         return userRepository.save(user);
     }
 

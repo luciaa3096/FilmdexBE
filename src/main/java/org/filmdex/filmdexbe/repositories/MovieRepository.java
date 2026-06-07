@@ -26,12 +26,25 @@ public class MovieRepository {
     }
 
     public List<Movie> getAllMovies() {
-        return restClient.get()
-                .uri("/movie/popular?language=es-ES")
-                .header("Authorization", "Bearer " + token) // <-- Usa el token configurado
-                .retrieve()
-                .body(TmdbResponse.class)
-                .results();
+        List<Movie> allMovies = new java.util.ArrayList<>();
+        for (int page = 1; page <= 3; page++) {
+            try {
+                TmdbResponse response = restClient.get()
+                        .uri("/movie/popular?language=es-ES&page=" + page)
+                        .header("Authorization", "Bearer " + token)
+                        .retrieve()
+                        .body(TmdbResponse.class);
+                if (response != null && response.results() != null) {
+                    allMovies.addAll(response.results());
+                }
+            } catch (Exception e) {
+                // Ignorar error de página para robustez
+            }
+        }
+        if (allMovies.size() > 50) {
+            return allMovies.subList(0, 50);
+        }
+        return allMovies;
     }
 
     public Movie getMovieById(Long id) {

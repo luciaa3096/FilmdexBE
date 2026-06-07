@@ -99,6 +99,48 @@ public class UserServiceTest {
     }
 
     @Test
+    void testSaveUser_UpdateExistingUserPreservesCollections() {
+        User existingUser = new User();
+        existingUser.setId(1L);
+        existingUser.setName("Andres Garcia Original");
+        existingUser.setUsername("andres_orig");
+        existingUser.setPassword("oldpwd");
+        existingUser.setFavourites(List.of(101L, 102L));
+        existingUser.setWatched(List.of(201L));
+
+        User updatePayload = new User();
+        updatePayload.setId(1L);
+        updatePayload.setName("Andres Garcia Updated");
+        updatePayload.setUsername("andres_new");
+        updatePayload.setPassword("newpwd");
+        updatePayload.setFavourites(null);
+        updatePayload.setWatched(null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = userService.saveUser(updatePayload);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Andres Garcia Updated", result.getName());
+        assertEquals("andres_new", result.getUsername());
+        assertEquals("newpwd", result.getPassword());
+        
+        assertNotNull(result.getFavourites());
+        assertEquals(2, result.getFavourites().size());
+        assertTrue(result.getFavourites().contains(101L));
+        assertTrue(result.getFavourites().contains(102L));
+
+        assertNotNull(result.getWatched());
+        assertEquals(1, result.getWatched().size());
+        assertTrue(result.getWatched().contains(201L));
+
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(existingUser);
+    }
+
+    @Test
     void testGetFavouriteMovies() {
         List<Long> expectedMovieIds = List.of(10L, 20L);
         when(userRepository.findFavouriteMoviesByUserId(1L)).thenReturn(expectedMovieIds);
